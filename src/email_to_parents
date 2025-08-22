@@ -1,0 +1,45 @@
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_homework_email(student_name, parent_email, task_name):
+    # Deine Absender-Daten
+    sender_email = "dein_email@gmail.com"
+    sender_password = "DEIN_APP_PASSWORT"  # z. B. App-Passwort bei Gmail
+    
+    # Email-Inhalt
+    subject = f"Hausaufgaben nicht erledigt: {student_name}"
+    body = f"""
+    Hallo,
+
+    {student_name} hat die Hausaufgabe "{task_name}" nicht erledigt.
+
+    Bitte sprich mit ihm/ihr darüber.
+
+    Mit freundlichen Grüßen,
+    Study Casino
+    """
+    
+    # Email zusammenbauen
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = parent_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+    
+    # Verbindung aufbauen und senden
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, parent_email, message.as_string())
+    
+    print("Email an Eltern wurde verschickt!")
+
+# Beispielaufruf:
+if __name__ == "__main__":
+    send_homework_email(
+        student_name="Max Mustermann",
+        parent_email="eltern.email@example.com",
+        task_name="Mathe Hausaufgabe Kapitel 3"
+    )
